@@ -1,6 +1,7 @@
 from bridge.context import ContextType
 from bridge.reply import Reply, ReplyType
 from channel.chat_message import ChatMessage
+from common.utils import split_text_by_space_or_quarter_space
 from plugins import *
 import plugins
 import requests
@@ -24,14 +25,16 @@ class StoreChat(Plugin):
         judge_content = self.judge_content_for_post(msg.content)
         if judge_content and judge_content["type"] == "post":
             topicId = judge_content["topicId"]
-            reply.content = f"🫡收到, 已同步至♾️️区平台 https://qu.gegegugu.com/t/{topicId}"
+            topicTitle = judge_content["title"]
+            reply.content = f"🫡收到, 已同步至桃源居在线社区平台: {topicTitle} https://tyj.gegegugu.com/t/{topicId}"
             e_context["reply"] = reply
             e_context.action = EventAction.BREAK_PASS
         else:
             e_context.action = EventAction.CONTINUE
 
     def judge_content_for_post(self, text: str):
-        text = text.split(" ", 1)[1] if " " in text else text
+        # text = text.split(" ", 1)[1] if " " in text else text
+        text = split_text_by_space_or_quarter_space(text)
         url = "http://localhost:8000/api/ai/gen/topic"
         payload = json.dumps({"content": text})
         headers = {"Content-Type": "application/json"}

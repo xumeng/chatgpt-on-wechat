@@ -1,5 +1,6 @@
 import io
 import os
+import re
 from urllib.parse import urlparse
 from PIL import Image
 
@@ -53,4 +54,16 @@ def split_string_by_utf8_length(string, max_length, max_split=0):
 
 def get_path_suffix(path):
     path = urlparse(path).path
-    return os.path.splitext(path)[-1].lstrip('.')
+    return os.path.splitext(path)[-1].lstrip(".")
+
+
+def split_text_by_space_or_quarter_space(text):
+    # 使用正则表达式来匹配空格或四分之一空格
+    # 然后根据第一个匹配的空格或四分之一空格分割文本
+    match = re.search(r"[\u0020\u2005]", text)
+    if match:
+        # 如果找到空格或四分之一空格，进行分割
+        return text[match.end() :]
+    else:
+        # 如果没有找到，返回原始文本
+        return text
